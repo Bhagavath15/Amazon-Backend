@@ -76,6 +76,45 @@ router.post('/verifyotp', async (req, res) => {
 });
 
 
+//verify Email
+
+router.post("/verifyEmail", async (req, res) => {
+    const { email, phoneNo } = req.body;
+
+    try {
+
+        const user = await client
+            .db("amazon")
+            .collection("signup")
+            .findOne({
+                username: email,
+                phoneNo: phoneNo
+            })
+        if (user) {
+            const transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.PASSWORD
+                }
+            })
+            await transporter.sendMail({
+                from: process.env.EMAIL,
+                to: email,
+                subject: "Amazon Grocery",
+                text: "Your Order has been conformed\
+                   Thank you for shopping with us.",//Click the link to reset your password: http://localhost:4004/reset-password
+            });
+            res.status(200).json({ message: "Your Order has been conformed" });
+        }
+        else {
+
+            return res.status(400).json({ messge: 'Email or Phone Number is not correct' })
+        }
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 
 // router.post("/reset-password", async (req, res) => {
