@@ -1,12 +1,15 @@
 import { client } from '../index.js';
 
-export async function hashpass(username, hashpassword) {
+export async function hashpass(firstname, lastname, username, hashpassword, phoneNo) {
     return await client
         .db("amazon")
         .collection("signup")
         .insertOne({
+            firstname: firstname,
+            lastname: lastname,
             username: username,
-            password: hashpassword
+            password: hashpassword,
+            phoneNo: phoneNo
         });
 }
 
